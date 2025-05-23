@@ -65,7 +65,7 @@ const Login = () => {
           <Link to="/register">
             <button>register</button>
           </Link>
-          <Link to="/loginByGH">
+          {/* <Link to="/loginByGH">
             <button className="secondary">
               <img
                 src="https://api.iconify.design/mdi:github.svg"
@@ -75,7 +75,7 @@ const Login = () => {
               />
               Login by github
             </button>
-          </Link>
+          </Link> */}
         </Form>
       </main>
     </>
