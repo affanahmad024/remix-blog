@@ -5,23 +5,23 @@ import { getTokenFromCookie, getUserFromToken } from "../cookies.server";
 
 export const loader = async ({ params, request }) => {
   const pid = params.postId;
-  let post;
   try {
-    post = await Posts.findById(pid);
-  } catch (e) {
-    return redirect("/")
-  }
-  if (!post) {
-    return redirect("/")
-  }
-  
-  const comments = await Comments.find({ postId: pid }).sort({ updatedAt: -1 });
+    let post = await Posts.findById(pid);
+    if (!post) {
+      return redirect("/");
+    }
+    const comments = await Comments.find({ postId: pid }).sort({
+      updatedAt: -1,
+    });
 
-  const token = await getTokenFromCookie(request);
-  if (!token) return redirect("/logout");
-  let userId = await getUserFromToken(token);
-  const isVerified = userId == post.userId;
-  return Response.json({ post, comments, isVerified });
+    const token = await getTokenFromCookie(request);
+    if (!token) return redirect("/logout");
+    let userId = await getUserFromToken(token);
+    const isVerified = userId == post.userId;
+    return Response.json({ post, comments, isVerified });
+  } catch (e) {
+    return redirect("/");
+  }
 };
 
 export const action = async ({ request }) => {
@@ -29,7 +29,7 @@ export const action = async ({ request }) => {
     const fd = await request.formData();
 
     const text = fd.get("text");
-    const postId = fd.get("postId")
+    const postId = fd.get("postId");
 
     const comment = new Comments({
       text,

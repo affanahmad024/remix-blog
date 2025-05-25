@@ -10,37 +10,35 @@ export const loader = async ({ params, request }) => {
   const id = params.userId;
   // userid = id;
   // console.log("Loader received id:", id);
-  console.log("user")
-  let user;
+  console.log("user");
+
   try {
-    user = await Users.findById(id);
+    let user = await Users.findById(id);
+    if (!user) {
+      // console.error("User not found for id:", id);
+      // Optionally throw an error or return a not found response.
+      // return Response.json({ "User not found for userId: ": id });
+      return redirect("/");
+    }
+    const posts = await Posts.find({ userId: id }).sort({ updatedAt: -1 });
+    const count = posts.length;
+    // console.log(user);
+    const token = await getTokenFromCookie(request);
+    // console.log("token", token);
+    if (!token) return redirect("/logout");
+    let userId = await getUserFromToken(token);
+    // console.log(userId, id);
+    const isVerified = userId === id;
+    return Response.json({
+      userId: user.id,
+      loggedInUser: userId,
+      userPosts: posts,
+      userCount: count,
+      isVerified,
+    });
   } catch (e) {
-    return redirect("/")
+    return redirect("/");
   }
-  
-  console.log("user",user)
-  if (!user) {
-    // console.error("User not found for id:", id);
-    // Optionally throw an error or return a not found response.
-    // return Response.json({ "User not found for userId: ": id });
-    return redirect("/")
-  }
-  const posts = await Posts.find({ userId: id }).sort({ updatedAt: -1 });
-  const count = posts.length;
-  // console.log(user);
-  const token = await getTokenFromCookie(request);
-  // console.log("token", token);
-  if (!token) return redirect("/logout");
-  let userId = await getUserFromToken(token);
-  // console.log(userId, id);
-  const isVerified = userId === id;
-  return Response.json({
-    userId: user.id,
-    loggedInUser: userId,
-    userPosts: posts,
-    userCount: count,
-    isVerified,
-  });
 };
 
 export const action = async ({ request }) => {
@@ -51,7 +49,7 @@ export const action = async ({ request }) => {
 
     const title = fd.get("title");
     const body = fd.get("body");
-    const userId = fd.get("userId")
+    const userId = fd.get("userId");
 
     const post = new Posts({
       title: title,
@@ -114,7 +112,6 @@ function User() {
       <div>{data.isVerified}</div>
       {userPosts.map((post) => (
         <article key={post._id}>
-
           {isEditable && pid == post._id ? (
             <>
               <Form method="put">
@@ -140,21 +137,19 @@ function User() {
 
               {isVerified ? (
                 <>
-                  <br/>
-                  <br/>
+                  <br />
+                  <br />
                   <button
                     onClick={() => {
                       setEditable(true);
                       setPid(post._id);
                     }}
-                    style={
-                      {width: "100%"}
-                    }
+                    style={{ width: "100%" }}
                   >
                     Edit Post
                   </button>
-                  <br/>
-                  <br/>
+                  <br />
+                  <br />
                   <Form method="delete">
                     <input type="hidden" name="postId" value={post._id} />
                     <button type="submit">Delete Post</button>
