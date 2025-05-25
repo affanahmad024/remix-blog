@@ -12,7 +12,7 @@ export const loader = async ({ params, request }) => {
   // console.log("Loader received id:", id);
   console.log("user");
 
-  try {
+  // try {
     let user = await Users.findById(id);
     if (!user) {
       // console.error("User not found for id:", id);
@@ -36,9 +36,9 @@ export const loader = async ({ params, request }) => {
       userCount: count,
       isVerified,
     });
-  } catch (e) {
-    return redirect("/");
-  }
+  // } catch (e) {
+  //   return redirect("/");
+  // }
 };
 
 export const action = async ({ request }) => {
