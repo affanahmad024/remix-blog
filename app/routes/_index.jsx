@@ -32,8 +32,8 @@ export default function Index() {
         {/* showing all posts */}
         <h3>All Posts</h3>
         {allPosts.map((post) => (
-          <article key={post._id}>
-            <Link to={`/post/${post._id}`}>
+          <article key={post.id}>
+            <Link to={`/post/${post.id}`}>
               title: {post.title}<br />
               body: {post.body} <br />
               {/* views: {post.views} <br /> */}
@@ -45,8 +45,8 @@ export default function Index() {
         <h3>All Users</h3>
         {allUsers.map((user) => (
 
-          <article key={user._id}>
-            <Link to={`/user/${user._id}`}>
+          <article key={user.id}>
+            <Link to={`/user/${user.id}`}>
               {user.email}
             </Link>
           </article>

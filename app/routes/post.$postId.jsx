@@ -32,7 +32,7 @@ export const action = async ({ request }) => {
     const postId = fd.get("postId");
 
     const comment = new Comments({
-      text,
+      text: text,
       postId: postId,
     });
     await comment.save();
