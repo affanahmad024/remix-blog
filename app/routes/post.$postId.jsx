@@ -3,10 +3,8 @@ import Posts from "../../models/post.model";
 import Comments from "../../models/comment.model";
 import { getTokenFromCookie, getUserFromToken } from "../cookies.server";
 
-let postid;
 export const loader = async ({ params, request }) => {
   const pid = params.postId;
-  postid = pid;
   let post;
   try {
     post = await Posts.findById(pid);
@@ -31,10 +29,11 @@ export const action = async ({ request }) => {
     const fd = await request.formData();
 
     const text = fd.get("text");
+    const postId = fd.get("postId")
 
     const comment = new Comments({
       text,
-      postId: postid,
+      postId: postId,
     });
     await comment.save();
   }
@@ -80,6 +79,7 @@ const Post = () => {
 
       <Form method="post">
         <input name="text" type="text" placeholder="Add your comment" />
+        <input name="postId" type="hidden" value={post._id} />
         <button type="submit">Comment</button>
       </Form>
 

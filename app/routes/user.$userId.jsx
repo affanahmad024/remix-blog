@@ -5,10 +5,10 @@ import Posts from "../../models/post.model";
 import { getTokenFromCookie, getUserFromToken } from "../cookies.server";
 import { useState } from "react";
 
-let userid;
+// let userid;
 export const loader = async ({ params, request }) => {
   const id = params.userId;
-  userid = id;
+  // userid = id;
   // console.log("Loader received id:", id);
   console.log("user")
   let user;
@@ -44,18 +44,19 @@ export const loader = async ({ params, request }) => {
 };
 
 export const action = async ({ request }) => {
-  let userId = userid;
+  // let userId = userid;
 
   if (request.method == "POST") {
     const fd = await request.formData();
 
     const title = fd.get("title");
     const body = fd.get("body");
+    const userId = fd.get("userId")
 
     const post = new Posts({
       title: title,
       body: body,
-      userId,
+      userId: userId,
     });
     await post.save();
   }
@@ -103,7 +104,7 @@ function User() {
         <Form method="post">
           <textarea name="title" id="title" placeholder="input post title" />
           <textarea name="body" id="body" placeholder="input post body" />
-          {/* <input name="type" type="hidden" value={'user'} /> */}
+          <input name="userId" type="hidden" value={singleUser} />
           <button type="submit">Create Post</button>
         </Form>
       ) : (
